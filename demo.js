@@ -1,20 +1,218 @@
-// const bowser = require('bowser')
-// const browser_report = require('browser-report')
-// const ua_parser_js = require('ua-parser-js')
-// const detect_js = require('Detect.js')
-// const platform_js = require('platform')
+var bowser
+var ua_parser_js
+var detect_js
+var platform_js
+var rowser
+var detector
+var engine
+// var browser_detection
 
+// https://en.wikipedia.org/wiki/JavaScript_engine
 
-console.log('foobar')
-document.body.innerHTML = `
-  <h1> environment </h1>
-  <pre>${JSON.stringify(uaMatch(), 0, 2)}</pre>
-  <hr>
-  <pre>${JSON.stringify(detect(), 0, 2)}</pre>
-`
+var fails = []
+const engines = {}
+try {
+  engine = require("detect-engine")
+  engines.detect_engine = engine
+} catch (e) {
+  fails.push('fail: engine')
+}
+// try {
+//   browser_detection = require('browser-version-detection')
+// } catch (e) {
+//   fails.push('fail: browser-version-detection')
+// }
+try {
+  detector = require('detector')
+} catch (e) {
+  fails.push('fail: detector')
+}
+try {
+  rowser = require('rowser')
+} catch (e) {
+  fails.push('fail: rowser')
+}
+try {
+  bowser = require('bowser')
+} catch (e) {
+  fails.push('fail: bowser')
+}
+try {
+  require('browser-report')
+} catch (e) {
+  fails.push('fail: browser-report')
+}
+try {
+  ua_parser_js = require('ua-parser-js')
+} catch (e) {
+  fails.push('fail: ua_parser_js')
+}
+try {
+  detect_js = require('detect.js')
+} catch (e) {
+  fails.push('fail: detect_js')
+}
+try {
+  platform_js = require('platform')
+} catch (e) {
+  fails.push('fail: platform_js')
+}
 
+var output_bowser = bowser.parse(window.navigator.userAgent)
+
+var ua = detect_js.parse(navigator.userAgent)
+
+var info1 = platform_js.parse(navigator.userAgent)
+
+function is_node_chakra () {
+  return process && (process.jsEngine === 'chakracore' || process.jsEngine === 'chakra')
+}
+function detect_engine () {
+  if (window.devicePixelRatio)  //If WebKit browser
+  {
+     if (escape(navigator.javaEnabled.toString()) == 'function%20javaEnabled%28%29%20%7B%20%5Bnative%20code%5D%20%7D')
+     {
+        alert('Chrome');
+     }
+     else if (escape(navigator.javaEnabled.toString()) != 'function%20javaEnabled%28%29%20%7B%20%5Bnative%20code%5D%20%7D')
+     {
+        alert('Safari');
+     }
+  }
+  var s = '';
+  for (x in {
+      3: 3,
+      1: 1
+    }) {
+    s += x
+  }
+  if (s === '31') {
+    alert('JSC');
+  } else {
+    alert('V8');
+  }
+  var v8string = 'function%20javaEnabled%28%29%20%7B%20%5Bnative%20code%5D%20%7D';
+
+  if ('WebkitAppearance' in document.documentElement.style) { //If (probably) WebKit browser
+      if (escape(navigator.javaEnabled.toString()) === v8string) {
+          console.log('V8 detected');
+      } else {
+          console.log('JSC detected');
+      }
+  } else {
+      console.log("Not a WebKit browser");
+  }
+}
+
+var rowser_info = rowser.detect()
+rowser_info.isWebkit = rowser.isWebkit
+rowser_info.iswebkit = rowser.iswebkit
+rowser_info.isWeBkIt = rowser.isWeBkIt
+rowser_info.isWEBKIT = rowser.isWEBKIT
+rowser_info.isSafari = rowser.isSafari
+rowser_info.issafari = rowser.issafari
+rowser_info.isSaFArI = rowser.isSaFArI
+rowser_info.isSAFARI = rowser.isSAFARI
+
+var uap = new ua_parser_js()
+var xxx1 = ua_parser_js()
+var xxx2 = {
+  ua: uap.getUA(),
+  browser: uap.getBrowser(),
+  engine: uap.getEngine(),
+  os: uap.getOS(),
+  device: uap.getDevice(),
+  cpu: uap.getCPU()
+}
+var xxx3 = uap.getResult()
+    // // let's test a custom user-agent string as an example
+    // var uastring = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.2 (KHTML, like Gecko) Ubuntu/11.10 Chromium/15.0.874.106 Chrome/15.0.874.106 Safari/535.2";
+    // parser.setUA(uastring);
+
+    // var result = parser.getResult();
+    // // this will also produce the same result (without instantiation):
+    // // var result = UAParser(uastring);
+
+    // console.log(result.browser);        // {name: "Chromium", version: "15.0.874.106"}
+    // console.log(result.device);         // {model: undefined, type: undefined, vendor: undefined}
+    // console.log(result.os);             // {name: "Ubuntu", version: "11.10"}
+    // console.log(result.os.version);     // "11.10"
+    // console.log(result.engine.name);    // "WebKit"
+    // console.log(result.cpu.architecture);   // "amd64"
+
+    // // do some other tests
+    // var uastring2 = "Mozilla/5.0 (compatible; Konqueror/4.1; OpenBSD) KHTML/4.1.4 (like Gecko)";
+    // console.log(parser.setUA(uastring2).getBrowser().name); // "Konqueror"
+    // console.log(parser.getOS());                            // {name: "OpenBSD", version: undefined}
+    // console.log(parser.getEngine());                        // {name: "KHTML", version: "4.1.4"}
+
+    // var uastring3 = 'Mozilla/5.0 (PlayBook; U; RIM Tablet OS 1.0.0; en-US) AppleWebKit/534.11 (KHTML, like Gecko) Version/7.1.0.7 Safari/534.11';
+    // console.log(parser.setUA(uastring3).getDevice().model); // "PlayBook"
+    // console.log(parser.getOS())                             // {name: "RIM Tablet OS", version: "1.0.0"}
+    // console.log(parser.getBrowser().name);                  // "Safari"
+function getstack () {
+  var error
+  var stack
+  try {
+    throw new Error('detect')
+  } catch (e) {
+    stack = e.stack
+    stack = stack.split('\n')
+    error = e
+  }
+  return {
+    error: error.message,
+    stack: stack
+  }
+}
+document.body.innerHTML = [
+  "<h2> fails </h2>",
+  "<pre>" + JSON.stringify(fails, 0, 2) + "</pre>",
+  "<hr>",
+  "<h1> error stack </h1>",
+  "<pre>" + JSON.stringify(getstack(), 0, 2) + "</pre>",
+  "<hr>",
+  "<h2> custom </h2>",
+  "<pre>" + JSON.stringify(uaMatch(), 0, 2) + "</pre>",
+  "<hr>",
+  "<h2> raw </h2>",
+  "<pre>" + JSON.stringify(detect(), 0, 2) + "</pre>",
+  "<hr>",
+  "<h2> bowser </h2>",
+  "<pre>" + JSON.stringify(output_bowser, 0, 2) + "</pre>",
+  "<hr>",
+  "<h2> browser-report </h2>",
+  "<pre>" + JSON.stringify(browserReportSync(), 0, 2) + "</pre>",
+  "<hr>",
+  "<h2> ua-parser 1 </h2>",
+  "<pre>" + JSON.stringify(xxx1, 0, 2) + "</pre>",
+  "<hr>",
+  "<h2> ua-parser 2 </h2>",
+  "<pre>" + JSON.stringify(xxx2, 0, 2) + "</pre>",
+  "<hr>",
+  "<h2> ua-parser 3 </h2>",
+  "<pre>" + JSON.stringify(xxx3, 0, 2) + "</pre>",
+  "<hr>",
+  "<h2> detect js </h2>",
+  "<pre>" + JSON.stringify(ua, 0, 2) + "</pre>",
+  "<hr>",
+  "<h2> rowser </h2>",
+  "<pre>" + JSON.stringify(rowser_info, 0, 2) + "</pre>",
+  "<hr>",
+  "<h2> detector </h2>",
+  "<pre>" + JSON.stringify(detector, 0, 2) + "</pre>",
+  "<hr>",
+  "<h2> platform_js </h2>",
+  "<pre>" + JSON.stringify(platform_js, 0, 2) + "</pre>",
+  "<hr>",
+  // "<h2> browser_detection </h2>",
+  // "<pre>" + JSON.stringify(browser_detection, 0, 2) + "</pre>",
+  // "<hr>",
+  "<h2> platform_js </h2>",
+  "<pre>" + JSON.stringify(info1, 0, 2) + "</pre>"
+].join('\n')
 function detect () {
-  const stats = {
+  var stats = {
     appCodeName: navigator.appCodeName,
     // Returns the string "Mozilla".
     appName: navigator.appName,
@@ -44,7 +242,7 @@ function detect () {
     languages: navigator.languages, // frozen array of valid BCP 47 language tags
     cookieEnabled: navigator.cookieEnabled, // Returns false if setting a cookie will be ignored, and true otherwise.
     // ------------
-    systemLanguage: navigator.systemLanguage,
+    systemLanguage: navigator.systemLanguage
     /*
     window . navigator . plugins . refresh( [ refresh ] )
 Updates the lists of supported plugins and MIME types for this page, and reloads the page if the lists have changed.
@@ -158,16 +356,6 @@ Returns true if there's a plugin that supports the MIME type "application/x-java
   // navigator.registerProtocolHandler = function () { [native code] }
   // navigator.unregisterProtocolHandler = function () { [native code] }
   // navigator.requestMIDIAccess = function () { [native code] }
-
-  var error
-  var stack
-  try {
-    throw new Error('detect')
-  } catch (e) {
-    stack = e.stack
-    error = e
-  }
-  stats.stack = stack.split('\n')
   return stats
 }
 ////////////////////////////////////////////////////////////////
